@@ -5,12 +5,14 @@ from .animal_datasets import GrayWhale
 from .animal_datasets import HyenaBothsides
 from .animal_datasets import WildHorseFace
 from .animal_datasets import SpermWhale
+from .animal_datasets import SpermWhaleTest
 from .animal_datasets import ConfigDataset
 from .animal_wbia import AnimalNameWbiaDataset  # noqa: F401
 
 
 __image_datasets = {
     "spermwhale": SpermWhale,
+    "spermwhale-test": SpermWhaleTest,
     "whaleshark": WhaleShark,
     "whaleshark_cropped": WhaleSharkCropped,
     "mantaray_cropped": MantaRayCropped,
