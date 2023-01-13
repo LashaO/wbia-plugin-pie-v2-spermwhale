@@ -19,8 +19,8 @@ from torchvision.transforms import (
 def build_train_test_transforms(
     height,
     width,
-    transforms_train='random_flip',
-    transforms_test='resize',
+    transforms_train="random_flip",
+    transforms_test="resize",
     norm_mean=[0.485, 0.456, 0.406],
     norm_std=[0.229, 0.224, 0.225],
     **kwargs
@@ -94,7 +94,7 @@ class Random2DTranslation(object):
 def build_transforms(
     height,
     width,
-    transforms='random_flip',
+    transforms="random_flip",
     norm_mean=[0.485, 0.456, 0.406],
     norm_std=[0.229, 0.224, 0.225],
     **kwargs
@@ -122,7 +122,7 @@ def build_transforms(
 
     if not isinstance(transforms, list):
         raise ValueError(
-            'transforms must be a list of strings, but found to be {}'.format(
+            "transforms must be a list of strings, but found to be {}".format(
                 type(transforms)
             )
         )
@@ -135,61 +135,62 @@ def build_transforms(
         norm_std = [0.229, 0.224, 0.225]  # imagenet std
     normalize = Normalize(mean=norm_mean, std=norm_std)
 
-    print('Building transforms ...')
+    print("Building transforms ...")
     transform_tr = []
 
-    if 'center_crop' in transforms:
-        print('+ center crop with size {}'.format(max(height, width)))
+    if "center_crop" in transforms:
+        print("+ center crop with size {}".format(max(height, width)))
         transform_tr += [CenterCrop(max(height, width))]
 
-    if 'resize' in transforms:
-        print('+ resize to {}x{}'.format(height, width))
+    if "resize" in transforms:
+        print("+ resize to {}x{}".format(height, width))
         transform_tr += [Resize((height, width))]
+        # transform_tr += [Resize(height, max_size=height)]
 
-    if 'random_flip' in transforms:
-        print('+ random flip')
+    if "random_flip" in transforms:
+        print("+ random flip")
         transform_tr += [RandomHorizontalFlip()]
 
-    if 'random_crop' in transforms:
+    if "random_crop" in transforms:
         print(
-            '+ random crop (enlarge to {}x{} and '
-            'crop {}x{})'.format(
+            "+ random crop (enlarge to {}x{} and "
+            "crop {}x{})".format(
                 int(round(height * 1.125)), int(round(width * 1.125)), height, width
             )
         )
         transform_tr += [Random2DTranslation(height, width)]
 
-    if 'random_affine' in transforms:
-        print('+ random affine')
+    if "random_affine" in transforms:
+        print("+ random affine")
         transform_tr += [
             RandomAffine(
                 degrees=10,
                 translate=(0.05, 0.05),
                 scale=(0.9, 1.1),
                 shear=(5, 5),
-                resample=0,
-                fillcolor=0,
+                # resample=0,
+                # fillcolor=0,
             )
         ]
 
-    if 'color_jitter' in transforms:
-        print('+ color jitter: brightness=0.5, contrast=0.5, saturation=0.5, hue=0.1')
+    if "color_jitter" in transforms:
+        print("+ color jitter: brightness=0.5, contrast=0.5, saturation=0.5, hue=0.1")
         transform_tr += [
             ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5, hue=0.1)
         ]
 
-    if 'random_grayscale' in transforms:
-        print('+ random grayscale: p=0.2')
+    if "random_grayscale" in transforms:
+        print("+ random grayscale: p=0.2")
         transform_tr += [RandomGrayscale(p=0.2)]
 
-    if 'blur' in transforms:
-        print('+ blur: kernel_size=11, sigma=(0.1, 2.0)')
+    if "blur" in transforms:
+        print("+ blur: kernel_size=11, sigma=(0.1, 2.0)")
         transform_tr += [GaussianBlur(kernel_size=11, sigma=(0.1, 2.0))]
 
-    print('+ to torch tensor of range [0, 1]')
+    print("+ to torch tensor of range [0, 1]")
     transform_tr += [ToTensor()]
 
-    print('+ normalization (mean={}, std={})'.format(norm_mean, norm_std))
+    print("+ normalization (mean={}, std={})".format(norm_mean, norm_std))
     transform_tr += [normalize]
 
     transform_tr = Compose(transform_tr)

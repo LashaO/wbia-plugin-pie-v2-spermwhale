@@ -4,23 +4,20 @@ from .animal_datasets import WhaleShark, WhaleSharkCropped, MantaRayCropped
 from .animal_datasets import GrayWhale
 from .animal_datasets import HyenaBothsides
 from .animal_datasets import WildHorseFace
-from .animal_datasets import Zebra
-from .animal_datasets import Cachalot, CachalotSubsample
+from .animal_datasets import SpermWhale
 from .animal_datasets import ConfigDataset
 from .animal_wbia import AnimalNameWbiaDataset  # noqa: F401
 
 
 __image_datasets = {
-    'whaleshark': WhaleShark,
-    'whaleshark_cropped': WhaleSharkCropped,
-    'mantaray_cropped': MantaRayCropped,
-    'graywhale': GrayWhale,
-    'hyena_bothsides': HyenaBothsides,
-    'wildhorse_face': WildHorseFace,
-    'zebra': Zebra,
-    'cachalot': Cachalot,
-    'cachalot_subsample': CachalotSubsample,
-    'config_dataset': ConfigDataset,
+    "spermwhale": SpermWhale,
+    "whaleshark": WhaleShark,
+    "whaleshark_cropped": WhaleSharkCropped,
+    "mantaray_cropped": MantaRayCropped,
+    "graywhale": GrayWhale,
+    "hyena_bothsides": HyenaBothsides,
+    "wildhorse_face": WildHorseFace,
+    "config_dataset": ConfigDataset,
 }
 
 
@@ -30,6 +27,6 @@ def init_image_dataset(name, **kwargs):
     if name not in avai_datasets:
         raise ValueError(
             'Invalid dataset name. Received "{}", '
-            'but expected to be one of {}'.format(name, avai_datasets)
+            "but expected to be one of {}".format(name, avai_datasets)
         )
     return __image_datasets[name](**kwargs)
