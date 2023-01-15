@@ -75,6 +75,7 @@ class SpermWhale(COCODataset):
             imsize=256,
             train_min_samples=3,
             train_max_samples=10,
+            train_max_samples=10,
             test_min_samples=3,
             test_max_samples=10,
             id_attr=["name"],
