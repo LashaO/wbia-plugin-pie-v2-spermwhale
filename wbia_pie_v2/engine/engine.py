@@ -19,6 +19,7 @@ from utils import (
     visualize_batch,
 )
 from losses import DeepSupervision
+from .wandb_utils import init_wandb
 
 
 class Engine(object):
@@ -44,16 +45,17 @@ class Engine(object):
         self._models = OrderedDict()
         self._optims = OrderedDict()
         self._scheds = OrderedDict()
+        self.wandb = init_wandb()
 
-    def register_model(self, name='model', model=None, optim=None, sched=None):
-        if self.__dict__.get('_models') is None:
-            raise AttributeError('Cannot assign model before super().__init__() call')
+    def register_model(self, name="model", model=None, optim=None, sched=None):
+        if self.__dict__.get("_models") is None:
+            raise AttributeError("Cannot assign model before super().__init__() call")
 
-        if self.__dict__.get('_optims') is None:
-            raise AttributeError('Cannot assign optim before super().__init__() call')
+        if self.__dict__.get("_optims") is None:
+            raise AttributeError("Cannot assign optim before super().__init__() call")
 
-        if self.__dict__.get('_scheds') is None:
-            raise AttributeError('Cannot assign sched before super().__init__() call')
+        if self.__dict__.get("_scheds") is None:
+            raise AttributeError("Cannot assign sched before super().__init__() call")
 
         self._models[name] = model
         self._optims[name] = optim
@@ -76,22 +78,22 @@ class Engine(object):
         for name in names:
             save_checkpoint(
                 {
-                    'state_dict': self._models[name].state_dict(),
-                    'epoch': epoch + 1,
-                    'rank1': rank1,
-                    'optimizer': self._optims[name].state_dict(),
-                    'scheduler': self._scheds[name].state_dict(),
+                    "state_dict": self._models[name].state_dict(),
+                    "epoch": epoch + 1,
+                    "rank1": rank1,
+                    "optimizer": self._optims[name].state_dict(),
+                    "scheduler": self._scheds[name].state_dict(),
                 },
                 osp.join(save_dir, name),
                 is_best=is_best,
             )
 
-    def set_model_mode(self, mode='train', names=None):
-        assert mode in ['train', 'eval', 'test']
+    def set_model_mode(self, mode="train", names=None):
+        assert mode in ["train", "eval", "test"]
         names = self.get_model_names(names)
 
         for name in names:
-            if mode == 'train':
+            if mode == "train":
                 self._models[name].train()
             else:
                 self._models[name].eval()
@@ -99,7 +101,7 @@ class Engine(object):
     def get_current_lr(self, names=None):
         names = self.get_model_names(names)
         name = names[0]
-        return self._optims[name].param_groups[-1]['lr']
+        return self._optims[name].param_groups[-1]["lr"]
 
     def update_lr(self, names=None):
         names = self.get_model_names(names)
@@ -110,8 +112,8 @@ class Engine(object):
 
     def run(
         self,
-        save_dir='log',
-        tb_dir='tb_log',
+        save_dir="log",
+        tb_dir="tb_log",
         max_epoch=0,
         start_epoch=0,
         print_freq=10,
@@ -120,7 +122,7 @@ class Engine(object):
         start_eval=0,
         eval_freq=-1,
         test_only=False,
-        dist_metric='euclidean',
+        dist_metric="euclidean",
         normalize_feature=False,
         visrank=False,
         visrank_topk=10,
@@ -159,7 +161,7 @@ class Engine(object):
         """
 
         if visrank and not test_only:
-            raise ValueError('visrank can be set to True only if test_only=True')
+            raise ValueError("visrank can be set to True only if test_only=True")
 
         if test_only:
             self.test(
@@ -183,7 +185,7 @@ class Engine(object):
         self.save_dir = save_dir
         self.vis_train_data = vis_train_data
 
-        print('=> Start training')
+        print("=> Start training")
         is_best = False
         best_rank1 = 0.0
 
@@ -216,7 +218,7 @@ class Engine(object):
                 self.save_model(self.epoch, rank1, save_dir, is_best=is_best)
 
         if self.max_epoch > 0:
-            print('=> Final test')
+            print("=> Final test")
             rank1 = self.test(
                 dist_metric=dist_metric,
                 normalize_feature=normalize_feature,
@@ -229,7 +231,7 @@ class Engine(object):
 
         elapsed = round(time.time() - time_start)
         elapsed = str(datetime.timedelta(seconds=elapsed))
-        print('Elapsed {}'.format(elapsed))
+        print("Elapsed {}".format(elapsed))
         if self.writer is not None:
             self.writer.close()
 
@@ -238,7 +240,7 @@ class Engine(object):
         batch_time = AverageMeter()
         data_time = AverageMeter()
 
-        self.set_model_mode('train')
+        self.set_model_mode("train")
 
         self.two_stepped_transfer_learning(self.epoch, fixbase_epoch, open_layers)
 
@@ -248,10 +250,10 @@ class Engine(object):
             if self.vis_train_data and self.epoch == 0:
                 # Visualise training batch at first epoch as a sanity check
                 visualize_batch(
-                    batch=data['img'],
-                    labels=data['pid'],
+                    batch=data["img"],
+                    labels=data["pid"],
                     save_dir=self.save_dir,
-                    figname='train_batch',
+                    figname="train_batch",
                 )
             data_time.update(time.time() - end)
             loss_summary = self.forward_backward(data)
@@ -260,16 +262,18 @@ class Engine(object):
 
             if (self.batch_idx + 1) % print_freq == 0:
                 nb_this_epoch = self.num_batches - (self.batch_idx + 1)
-                nb_future_epochs = (self.max_epoch - (self.epoch + 1)) * self.num_batches
+                nb_future_epochs = (
+                    self.max_epoch - (self.epoch + 1)
+                ) * self.num_batches
                 eta_seconds = batch_time.avg * (nb_this_epoch + nb_future_epochs)
                 eta_str = str(datetime.timedelta(seconds=int(eta_seconds)))
                 print(
-                    'epoch: [{0}/{1}][{2}/{3}]\t'
-                    'time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
-                    'data {data_time.val:.3f} ({data_time.avg:.3f})\t'
-                    'eta {eta}\t'
-                    '{losses}\t'
-                    'lr {lr:.6f}'.format(
+                    "epoch: [{0}/{1}][{2}/{3}]\t"
+                    "time {batch_time.val:.3f} ({batch_time.avg:.3f})\t"
+                    "data {data_time.val:.3f} ({data_time.avg:.3f})\t"
+                    "eta {eta}\t"
+                    "{losses}\t"
+                    "lr {lr:.6f}".format(
                         self.epoch + 1,
                         self.max_epoch,
                         self.batch_idx + 1,
@@ -282,13 +286,25 @@ class Engine(object):
                     )
                 )
 
+                self.wandb.log(
+                    {
+                        "lr": self.get_current_lr(),
+                    }
+                )
+                for name, meter in self.meters.items():
+                    self.wandb.log(
+                        {
+                            "train_" + name: meter.val,
+                        }
+                    )
+
             if self.writer is not None:
                 n_iter = self.epoch * self.num_batches + self.batch_idx
-                self.writer.add_scalar('Train/time', batch_time.avg, n_iter)
-                self.writer.add_scalar('Train/data', data_time.avg, n_iter)
+                self.writer.add_scalar("Train/time", batch_time.avg, n_iter)
+                self.writer.add_scalar("Train/data", data_time.avg, n_iter)
                 for name, meter in losses.meters.items():
-                    self.writer.add_scalar('Train/' + name, meter.avg, n_iter)
-                self.writer.add_scalar('Train/lr', self.get_current_lr(), n_iter)
+                    self.writer.add_scalar("Train/" + name, meter.avg, n_iter)
+                self.writer.add_scalar("Train/lr", self.get_current_lr(), n_iter)
 
             end = time.time()
 
@@ -308,13 +324,13 @@ class Engine(object):
         return self.model(input)
 
     def parse_data_for_train(self, data):
-        imgs = data['img']
-        pids = data['pid']
+        imgs = data["img"]
+        pids = data["pid"]
         return imgs, pids
 
     def parse_data_for_eval(self, data):
-        imgs = data['img']
-        pids = data['pid']
+        imgs = data["img"]
+        pids = data["pid"]
         return imgs, pids
 
     def two_stepped_transfer_learning(
@@ -333,7 +349,7 @@ class Engine(object):
 
         if (epoch + 1) <= fixbase_epoch and open_layers is not None:
             print(
-                '* Only train {} (epoch: {}/{})'.format(
+                "* Only train {} (epoch: {}/{})".format(
                     open_layers, epoch + 1, fixbase_epoch
                 )
             )
