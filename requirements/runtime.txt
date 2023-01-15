@@ -10,3 +10,4 @@ wbia-utool
 wbia-utool
 wildbook-ia
 yacs
+wandb

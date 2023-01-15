@@ -20,17 +20,17 @@ class PIEEngine(Engine):
 
     def test(
         self,
-        dist_metric='euclidean',
+        dist_metric="euclidean",
         normalize_feature=False,
         visrank=False,
         visrank_topk=10,
-        save_dir='',
+        save_dir="",
         ranks=[1, 5, 10, 20],
         rerank=False,
         visrank_resize=True,
     ):
         r"""Tests model on target datasets."""
-        self.set_model_mode('eval')
+        self.set_model_mode("eval")
 
         name = self.datamanager.source
         rank1, mAP = self._evaluate(
@@ -47,21 +47,21 @@ class PIEEngine(Engine):
         )
 
         if self.writer is not None:
-            self.writer.add_scalar(f'Test/{name}/rank1', rank1, self.epoch)
-            self.writer.add_scalar(f'Test/{name}/mAP', mAP, self.epoch)
+            self.writer.add_scalar(f"Test/{name}/rank1", rank1, self.epoch)
+            self.writer.add_scalar(f"Test/{name}/mAP", mAP, self.epoch)
 
         return rank1
 
     @torch.no_grad()
     def _evaluate(
         self,
-        dataset_name='',
+        dataset_name="",
         test_loader=None,
-        dist_metric='euclidean',
+        dist_metric="euclidean",
         normalize_feature=False,
         visrank=False,
         visrank_topk=10,
-        save_dir='',
+        save_dir="",
         ranks=[1, 5, 10, 20],
         rerank=False,
         visrank_resize=True,
@@ -84,28 +84,30 @@ class PIEEngine(Engine):
             pids_ = np.asarray(pids_)
             return f_, pids_
 
-        print('Extracting features from query set ...')
+        print("Extracting features from query set ...")
         qf, q_pids = _feature_extraction(test_loader)
-        print('Done, obtained {}-by-{} matrix'.format(qf.size(0), qf.size(1)))
+        print("Done, obtained {}-by-{} matrix".format(qf.size(0), qf.size(1)))
 
-        print('Speed: {:.4f} sec/batch'.format(batch_time.avg))
+        print("Speed: {:.4f} sec/batch".format(batch_time.avg))
 
         if normalize_feature:
-            print('Normalzing features with L2 norm ...')
+            print("Normalzing features with L2 norm ...")
             qf = F.normalize(qf, p=2, dim=1)
 
-        print('Computing distance matrix with metric={} ...'.format(dist_metric))
+        print("Computing distance matrix with metric={} ...".format(dist_metric))
         distmat = compute_distance_matrix(qf, qf, dist_metric)
         distmat = distmat.numpy()
 
-        print('Computing CMC and mAP ...')
+        print("Computing CMC and mAP ...")
         cmc, mAP = eval_onevsall(distmat, q_pids)
 
-        print('** Results **')
-        print('mAP: {:.1%}'.format(mAP))
-        print('CMC curve')
+        #
+        print("** Results **")
+        print("mAP: {:.1%}".format(mAP))
+        print("CMC curve")
         for r in ranks:
-            print('Rank-{:<3}: {:.1%}'.format(r, cmc[r - 1]))
+            print("Rank-{:<3}: {:.1%}".format(r, cmc[r - 1]))
+            self.wandb.log({"Rank-{:<3}".format(r): cmc[r - 1]})
 
         if visrank:
             visualize_ranked_results(
@@ -113,7 +115,7 @@ class PIEEngine(Engine):
                 self.datamanager.test_set,
                 width=self.datamanager.width,
                 height=self.datamanager.height,
-                save_dir=osp.join(save_dir, 'visrank_' + dataset_name),
+                save_dir=osp.join(save_dir, "visrank_" + dataset_name),
                 topk=visrank_topk,
                 resize=visrank_resize,
             )
