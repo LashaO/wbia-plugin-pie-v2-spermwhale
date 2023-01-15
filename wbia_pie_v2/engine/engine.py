@@ -291,7 +291,7 @@ class Engine(object):
                         "lr": self.get_current_lr(),
                     }
                 )
-                for name, meter in self.meters.items():
+                for name, meter in losses.meters.items():
                     self.wandb.log(
                         {
                             "train_" + name: meter.val,
