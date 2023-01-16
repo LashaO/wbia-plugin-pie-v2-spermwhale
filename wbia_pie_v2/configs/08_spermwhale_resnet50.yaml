@@ -4,7 +4,7 @@ model:
 
 data:
   type: 'image'
-  source: 'spermwhale'
+  source: 'spermwhale-max10'
   height: 256
   width: 256
   transforms_train: ['resize', 'random_affine', 'color_jitter', 'random_grayscale', 'blur']

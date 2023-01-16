@@ -74,6 +74,27 @@ class SpermWhale(COCODataset):
             resize=True,
             imsize=256,
             train_min_samples=3,
+            # train_max_samples=10,
+            test_min_samples=3,
+            test_max_samples=10,
+            id_attr=["name"],
+            # viewpoint_list=['left', 'right'],
+            debug=False,
+            **kwargs,
+        )
+
+class SpermWhaleMax10(COCODataset):
+    def __init__(self, **kwargs):
+        super(SpermWhale, self).__init__(
+            name="spermwhale",
+            dataset_dir="spermwhale",
+            dataset_url="https://cthulhu.dyn.wildme.io/public/datasets/coco.sperm_whale.tar.gz",
+            split="train2021",
+            split_test="val2021",
+            crop=True,  # crop bbox
+            resize=True,
+            imsize=256,
+            train_min_samples=3,
             train_max_samples=10,
             test_min_samples=3,
             test_max_samples=10,
