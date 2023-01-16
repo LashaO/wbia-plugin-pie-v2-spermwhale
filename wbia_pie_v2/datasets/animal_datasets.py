@@ -83,9 +83,10 @@ class SpermWhale(COCODataset):
             **kwargs,
         )
 
+
 class SpermWhaleMax10(COCODataset):
     def __init__(self, **kwargs):
-        super(SpermWhale, self).__init__(
+        super(SpermWhaleMax10, self).__init__(
             name="spermwhale",
             dataset_dir="spermwhale",
             dataset_url="https://cthulhu.dyn.wildme.io/public/datasets/coco.sperm_whale.tar.gz",
