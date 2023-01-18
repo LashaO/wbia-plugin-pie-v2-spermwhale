@@ -41,6 +41,28 @@ def _read_and_validate_dataset_config(config_fpath):
     return conf
 
 
+class BottlenoseDolphin(COCODataset):
+    def __init__(self, **kwargs):
+        super(BottlenoseDolphin, self).__init__(
+            name="bottlenose_dolphin",
+            dataset_dir="bottlenose_dolphin",
+            dataset_url="https://cthulhu.dyn.wildme.io/public/datasets/flukebook.id.dolphin.tar.gz",
+            split="train2021",
+            split_test="val2021",
+            crop=True,  # crop bbox
+            resize=True,
+            imsize=256,
+            train_min_samples=3,
+            # train_max_samples=10,
+            test_min_samples=3,
+            test_max_samples=10,
+            id_attr=["name"],
+            # viewpoint_list=['left', 'right'],
+            debug=False,
+            **kwargs,
+        )
+
+
 class SpermWhaleTest(COCODataset):
     def __init__(self, **kwargs):
         super(SpermWhaleTest, self).__init__(

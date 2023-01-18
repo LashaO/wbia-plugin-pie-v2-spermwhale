@@ -8,11 +8,13 @@ from .animal_datasets import SpermWhale
 from .animal_datasets import SpermWhaleMax10
 from .animal_datasets import SpermWhaleTest
 from .animal_datasets import SpermWhaleMax10Test
+from .animal_datasets import BottlenoseDolphin
 from .animal_datasets import ConfigDataset
 from .animal_wbia import AnimalNameWbiaDataset  # noqa: F401
 
 
 __image_datasets = {
+    "bottlenose_dolphin": BottlenoseDolphin,
     "spermwhale": SpermWhale,
     "spermwhale-max10": SpermWhaleMax10,
     "spermwhale-test": SpermWhaleTest,
