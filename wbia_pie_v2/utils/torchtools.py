@@ -44,7 +44,6 @@ def save_checkpoint(state, save_dir, is_best=False, remove_module_from_keys=Fals
         state['state_dict'] = new_state_dict
     # save
     epoch = state['epoch']
-    save_dir = "/content/drive/MyDrive/wild-me-share/PIE/exp1"
     fpath = osp.join(save_dir, 'model.pth.tar-' + str(epoch))
     torch.save(state, fpath)
     print('Checkpoint saved to "{}"'.format(fpath))
