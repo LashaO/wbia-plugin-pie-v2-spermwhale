@@ -49,14 +49,14 @@ class BottlenoseDolphin(COCODataset):
             dataset_url="https://cthulhu.dyn.wildme.io/public/datasets/flukebook.id.dolphin.tar.gz",
             split="train2021",
             split_test="val2021",
-            crop=True,  # crop bbox
+            crop=False,  # crop to bbox
             resize=True,
             imsize=256,
             train_min_samples=3,
-            # train_max_samples=10,
+            train_max_samples=10,
             test_min_samples=3,
             test_max_samples=10,
-            id_attr=["name"],
+            id_attr=["name"], 
             # viewpoint_list=['left', 'right'],
             debug=False,
             **kwargs,
