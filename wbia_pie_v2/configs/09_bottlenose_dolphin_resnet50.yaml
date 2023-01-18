@@ -9,6 +9,7 @@ data:
   width: 256
   transforms_train: ['resize', 'random_affine', 'color_jitter', 'random_grayscale', 'blur']
   version: 'v1'
+  
 
 loss:
   name: 'triplet'
