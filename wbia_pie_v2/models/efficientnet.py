@@ -10,14 +10,14 @@ logger = logging.getLogger(__name__)
 
 
 NAME_EMBEDDING_SIZE = {
-    'efficientnet-b0': 1280,
-    'efficientnet-b1': 1280,
-    'efficientnet-b2': 1408,
-    'efficientnet-b3': 1536,
-    'efficientnet-b4': 1792,
-    'efficientnet-b5': 2048,
-    'efficientnet-b6': 2304,
-    'efficientnet-b7': 2560,
+    "efficientnet-b0": 1280,
+    "efficientnet-b1": 1280,
+    "efficientnet-b2": 1408,
+    "efficientnet-b3": 1536,
+    "efficientnet-b4": 1792,
+    "efficientnet-b5": 2048,
+    "efficientnet-b6": 2304,
+    "efficientnet-b7": 2560,
 }
 
 
@@ -53,7 +53,7 @@ class EfficientNetReid(nn.Module):
 
         assert isinstance(
             fc_dims, (list, tuple)
-        ), 'fc_dims must be either list or tuple, but got {}'.format(type(fc_dims))
+        ), "fc_dims must be either list or tuple, but got {}".format(type(fc_dims))
 
         layers = []
         for dim in fc_dims:
@@ -84,17 +84,29 @@ class EfficientNetReid(nn.Module):
 
         y = self.classifier(v)
 
-        if 'softmax' in self.loss:
+        if "softmax" in self.loss:
             return y
-        elif 'triplet' in self.loss:
+        elif "triplet" in self.loss:
             return y, v
         else:
-            raise KeyError('Unsupported loss: {}'.format(self.loss))
+            raise KeyError("Unsupported loss: {}".format(self.loss))
 
 
-def efficientnet_b4(num_classes, loss='softmax', pretrained=True, **kwargs):
+def efficientnet_b4(num_classes, loss="softmax", pretrained=True, **kwargs):
     model = EfficientNetReid(
-        core_name='efficientnet-b4',
+        core_name="efficientnet-b4",
+        num_classes=num_classes,
+        loss=loss,
+        fc_dims=[512],
+        dropout_p=None,
+    )
+
+    return model
+
+
+def efficientnet_b0(num_classes, loss="softmax", pretrained=True, **kwargs):
+    model = EfficientNetReid(
+        core_name="efficientnet-b0",
         num_classes=num_classes,
         loss=loss,
         fc_dims=[512],
