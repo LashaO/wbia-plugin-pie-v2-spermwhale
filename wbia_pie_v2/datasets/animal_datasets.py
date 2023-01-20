@@ -10,6 +10,7 @@ class ConfigDataset(COCODataset):
         conf = _read_and_validate_dataset_config(config_fpath)
         # name is the config filename without extension or containing folders
         id_attr = ["name"]
+
         if conf["data"].get("use_viewpoint", True):
             id_attr.append("viewpoint")
         mode = kwargs.get("mode", "train")
@@ -17,7 +18,8 @@ class ConfigDataset(COCODataset):
             name=os.path.splitext(os.path.split(config_fpath)[1])[0],
             dataset_url=conf["data"].get("dataset_url", None),
             dataset_dir=conf["data"]["coco_dir"],
-            split=conf["data"].get("split", f"{mode}2021"),
+            split=conf["data"].get("split", f"train2021"),
+            split_test=conf["data"].get("split_test", f"val2021"),
             crop=conf["data"].get("crop", True),
             resize=conf["data"].get("resize", True),
             imsize=min(conf["data"]["height"], conf["data"]["width"]),
@@ -25,6 +27,7 @@ class ConfigDataset(COCODataset):
             test_min_samples=conf["data"].get("test_min_samples", 3),
             viewpoint_list=conf["data"].get("viewpoint_list", ["left", "right"]),
             debug=conf["data"].get("debug", False),
+            id_attr=id_attr,
             **kwargs,
         )
 
@@ -56,7 +59,7 @@ class BottlenoseDolphin(COCODataset):
             train_max_samples=10,
             test_min_samples=2,
             test_max_samples=10,
-            id_attr=["name"], 
+            id_attr=["name"],
             # viewpoint_list=['left', 'right'],
             debug=False,
             **kwargs,
