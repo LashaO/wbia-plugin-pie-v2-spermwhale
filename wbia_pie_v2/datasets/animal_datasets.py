@@ -13,7 +13,7 @@ class ConfigDataset(COCODataset):
 
         if conf["data"].get("use_viewpoint", True):
             id_attr.append("viewpoint")
-        mode = kwargs.get("mode", "train")
+        # mode = kwargs.get("mode", "train")
         super(ConfigDataset, self).__init__(
             name=os.path.splitext(os.path.split(config_fpath)[1])[0],
             dataset_url=conf["data"].get("dataset_url", None),
@@ -28,6 +28,7 @@ class ConfigDataset(COCODataset):
             viewpoint_list=conf["data"].get("viewpoint_list", ["left", "right"]),
             debug=conf["data"].get("debug", False),
             id_attr=id_attr,
+            normalize_viewpoint=conf["data"].get("normalize_viewpoint", False),
             **kwargs,
         )
 

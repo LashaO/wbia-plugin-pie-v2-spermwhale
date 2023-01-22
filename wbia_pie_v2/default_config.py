@@ -33,9 +33,11 @@ def get_default_config():
     cfg.data.version = "v0"
     cfg.data.tb_dir = "tb_log"
     cfg.data.use_viewpoint = False
+    cfg.data.normalize_viewpoint = False
     cfg.data.train_min_samples = 3
     cfg.data.test_min_samples = 2
     cfg.data.split_test = "val2021"
+    cfg.data.viewpoint_list = None
 
     # data fields added for auto_train
     cfg.data.coco_dir = None  # coco-formatted training data directory

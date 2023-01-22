@@ -63,6 +63,7 @@ class COCODataset(ImageDataset):
         viewpoint_csv=None,
         excluded_names=None,
         flip_test=False,
+        normalize_viewpoint=False,
         **kwargs
     ):
         # Prepare directories
@@ -103,6 +104,7 @@ class COCODataset(ImageDataset):
                 fliplr=False,
                 viewpoint_list=self.viewpoint_list,
                 excluded_names=excluded_names,
+                normalize_viewpoint=normalize_viewpoint,
             )
 
         print(
@@ -126,6 +128,7 @@ class COCODataset(ImageDataset):
                     fliplr=flip_test,
                     viewpoint_list=self.viewpoint_list,
                     excluded_names=excluded_names,
+                    normalize_viewpoint=normalize_viewpoint,
                 )
             print(
                 "=> load {} samples from {} / {} dataset".format(
@@ -286,6 +289,7 @@ class COCODataset(ImageDataset):
         fliplr,
         viewpoint_list,
         excluded_names,
+        normalize_viewpoint,
         print_freq=100,
     ):
         """Preprocess images by cropping area around bounding box
@@ -357,6 +361,15 @@ class COCODataset(ImageDataset):
 
             if fliplr:
                 image = np.fliplr(image)
+            if normalize_viewpoint:
+                if not db_rec["viewpoint"] in ["left", "right"]:
+                    raise ValueError(
+                        "Viewpoint {} not in ['left', 'right']".format(
+                            db_rec["viewpoint"]
+                        )
+                    )
+                if db_rec["viewpoint"] == "right":
+                    image = np.fliplr(image)
 
             # Save image to processed folder
             im_filename = osp.basename(db_rec["image_path"])
