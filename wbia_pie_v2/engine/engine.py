@@ -30,7 +30,7 @@ class Engine(object):
         use_gpu (bool, optional): use gpu. Default is True.
     """
 
-    def __init__(self, datamanager, use_gpu=True):
+    def __init__(self, datamanager, use_gpu=True, use_wandb=True):
         self.datamanager = datamanager
         self.train_loader = self.datamanager.train_loader
         self.test_loader = self.datamanager.test_loader
@@ -45,7 +45,7 @@ class Engine(object):
         self._models = OrderedDict()
         self._optims = OrderedDict()
         self._scheds = OrderedDict()
-        self.wandb = init_wandb()
+        self.wandb = init_wandb() if use_wandb else None
 
     def register_model(self, name="model", model=None, optim=None, sched=None):
         if self.__dict__.get("_models") is None:
@@ -286,17 +286,18 @@ class Engine(object):
                     )
                 )
 
-                self.wandb.log(
-                    {
-                        "lr": self.get_current_lr(),
-                    }
-                )
-                for name, meter in losses.meters.items():
+                if self.wandb:
                     self.wandb.log(
                         {
-                            "train_" + name: meter.val,
+                            "lr": self.get_current_lr(),
                         }
                     )
+                    for name, meter in losses.meters.items():
+                        self.wandb.log(
+                            {
+                                "train_" + name: meter.val,
+                            }
+                        )
 
             if self.writer is not None:
                 n_iter = self.epoch * self.num_batches + self.batch_idx

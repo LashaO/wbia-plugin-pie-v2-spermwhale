@@ -103,6 +103,7 @@ def test(args):
         scheduler=scheduler,
         use_gpu=cfg.use_gpu,
         label_smooth=cfg.loss.softmax.label_smooth,
+        use_wandb=False,
     )
 
     engine_args = engine_run_kwargs(cfg)

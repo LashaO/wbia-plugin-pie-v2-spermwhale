@@ -15,8 +15,8 @@ from metrics import eval_onevsall
 class PIEEngine(Engine):
     """Engine class for learning PIE for animal re-identification."""
 
-    def __init__(self, datamanager, use_gpu=True):
-        super(PIEEngine, self).__init__(datamanager, use_gpu)
+    def __init__(self, datamanager, use_gpu=True, use_wandb=True):
+        super(PIEEngine, self).__init__(datamanager, use_gpu, use_wandb)
 
     def test(
         self,
@@ -107,7 +107,8 @@ class PIEEngine(Engine):
         print("CMC curve")
         for r in ranks:
             print("Rank-{:<3}: {:.1%}".format(r, cmc[r - 1]))
-            self.wandb.log({"Rank-{:<3}".format(r): cmc[r - 1]})
+            if self.wandb:
+                self.wandb.log({"Rank-{:<3}".format(r): cmc[r - 1]})
 
         if visrank:
             visualize_ranked_results(

@@ -34,13 +34,14 @@ class TripletPIEEngine(PIEEngine):
         scheduler=None,
         use_gpu=True,
         label_smooth=True,
+        use_wandb=True,
     ):
-        super(TripletPIEEngine, self).__init__(datamanager, use_gpu)
+        super(TripletPIEEngine, self).__init__(datamanager, use_gpu, use_wandb)
 
         self.model = model
         self.optimizer = optimizer
         self.scheduler = scheduler
-        self.register_model('model', model, optimizer, scheduler)
+        self.register_model("model", model, optimizer, scheduler)
 
         assert weight_t >= 0 and weight_x >= 0
         assert weight_t + weight_x > 0
@@ -53,7 +54,7 @@ class TripletPIEEngine(PIEEngine):
             use_gpu=self.use_gpu,
             label_smooth=label_smooth,
         )
-        print('***Initialized Triplet PIE Engine***')
+        print("***Initialized Triplet PIE Engine***")
 
     def forward_backward(self, data):
         imgs, pids = self.parse_data_for_train(data)
@@ -70,13 +71,13 @@ class TripletPIEEngine(PIEEngine):
         if self.weight_t > 0:
             loss_t = self.compute_loss(self.criterion_t, features, pids)
             loss += self.weight_t * loss_t
-            loss_summary['loss_t'] = loss_t.item()
+            loss_summary["loss_t"] = loss_t.item()
 
         if self.weight_x > 0:
             loss_x = self.compute_loss(self.criterion_x, outputs, pids)
             loss += self.weight_x * loss_x
-            loss_summary['loss_x'] = loss_x.item()
-            loss_summary['acc'] = metrics.accuracy(outputs, pids)[0].item()
+            loss_summary["loss_x"] = loss_x.item()
+            loss_summary["acc"] = metrics.accuracy(outputs, pids)[0].item()
 
         assert loss_summary
 
