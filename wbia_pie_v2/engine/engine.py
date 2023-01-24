@@ -176,6 +176,17 @@ class Engine(object):
             )
             return
 
+        self.test(
+            dist_metric=dist_metric,
+            normalize_feature=normalize_feature,
+            visrank=visrank,
+            visrank_topk=visrank_topk,
+            save_dir=save_dir,
+            ranks=ranks,
+            rerank=rerank,
+            visrank_resize=visrank_resize,
+        )
+
         if self.writer is None:
             self.writer = SummaryWriter(log_dir=tb_dir)
 
