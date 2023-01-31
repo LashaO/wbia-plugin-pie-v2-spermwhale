@@ -38,6 +38,7 @@ def get_default_config():
     cfg.data.test_min_samples = 2
     cfg.data.split_test = "val2021"
     cfg.data.viewpoint_list = None
+    cfg.data.crop = False
 
     # data fields added for auto_train
     cfg.data.coco_dir = None  # coco-formatted training data directory
