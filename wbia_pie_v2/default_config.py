@@ -36,6 +36,8 @@ def get_default_config():
     cfg.data.normalize_viewpoint = False
     cfg.data.train_min_samples = 3
     cfg.data.test_min_samples = 2
+    cfg.data.train_max_samples = None
+    cfg.data.test_max_samples = None
     cfg.data.split_test = "val2021"
     cfg.data.viewpoint_list = None
     cfg.data.crop = False
