@@ -25,7 +25,7 @@ class ConfigDataset(COCODataset):
             imsize=min(conf["data"]["height"], conf["data"]["width"]),
             train_min_samples=conf["data"].get("train_min_samples", 3),
             test_min_samples=conf["data"].get("test_min_samples", 3),
-            train_max_samples=conf["data"].get("test_max_samples", 10),
+            train_max_samples=conf["data"].get("train_max_samples", 10),
             test_max_samples=conf["data"].get("test_max_samples", 10),
             viewpoint_list=conf["data"].get("viewpoint_list", ["left", "right"]),
             debug=conf["data"].get("debug", False),
