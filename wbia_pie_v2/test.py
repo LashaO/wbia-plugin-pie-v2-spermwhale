@@ -77,7 +77,10 @@ def test(args):
     )
     print("Model complexity: params={:,} flops={:,}".format(num_params, flops))
 
-    # if cfg.model.load_weights and check_isfile(cfg.model.load_weights):
+    if cfg.model.load_weights and check_isfile(cfg.model.load_weights):
+        load_pretrained_weights(model, cfg.model.load_weights)
+
+    # This will override cfg load_weights. Used for quick testing of multiple weight files
     if args.weights:
         load_pretrained_weights(model, args.weights)
 
